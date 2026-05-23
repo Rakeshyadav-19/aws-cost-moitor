@@ -116,6 +116,12 @@ export async function GET() {
     });
   } catch (err: any) {
     console.error("AWS Cost Explorer error:", err);
+    if (err.name === 'DataUnavailableException' || (err.message && err.message.includes('Data is not available'))) {
+      return NextResponse.json({ 
+        error: "AWS Cost Explorer is preparing your data. This usually takes 24-48 hours after enabling.",
+        isDataUnavailable: true
+      }, { status: 400 });
+    }
     return NextResponse.json({ error: "Failed to fetch AWS data. Check your credentials." }, { status: 500 });
   }
 }

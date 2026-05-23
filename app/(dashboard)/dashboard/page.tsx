@@ -33,6 +33,7 @@ export default function DashboardPage() {
   const [data, setData] = useState<CostData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isDataUnavailable, setIsDataUnavailable] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -57,11 +58,15 @@ export default function DashboardPage() {
       const d = await res.json();
       if (!res.ok) {
         setError(d.error);
+        setIsDataUnavailable(d.isDataUnavailable || false);
       } else {
         setData(d);
+        setError("");
+        setIsDataUnavailable(false);
       }
     } catch (err: any) {
       setError(err.message);
+      setIsDataUnavailable(false);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -99,6 +104,21 @@ export default function DashboardPage() {
           <div className="skeleton" style={{ height: 350 }} />
           <div className="skeleton" style={{ height: 350 }} />
         </div>
+      </div>
+    );
+  }
+
+  if (isDataUnavailable) {
+    return (
+      <div style={{ padding: 80, textAlign: 'center' }}>
+        <div style={{ fontSize: 40, marginBottom: 20 }}>⏳</div>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Data Processing</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: 24, maxWidth: 500, margin: '0 auto 24px', lineHeight: 1.6 }}>
+          AWS Cost Explorer is currently gathering and processing your billing data. If you just enabled Cost Explorer on this AWS account, it typically takes <strong>24 to 48 hours</strong> before data becomes available.
+        </p>
+        <button className="btn-primary" onClick={() => loadData(true)} disabled={refreshing}>
+          {refreshing ? 'Checking...' : 'Check Again'}
+        </button>
       </div>
     );
   }

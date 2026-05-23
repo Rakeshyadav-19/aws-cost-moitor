@@ -205,11 +205,29 @@ export default function SettingsModal({ open, onClose, onSaved }: Props) {
               </div>
             )}
             
-            <div style={{ padding: '12px 16px', background: 'var(--bg-secondary)', borderRadius: 8, display: 'flex', gap: 10 }}>
-              <Info size={16} color="var(--blue)" style={{ flexShrink: 0, marginTop: 2 }} />
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                Credentials are encrypted using AES-256 and stored securely. We only require read-only permissions for Cost Explorer.
-              </p>
+            <div style={{ padding: '12px 16px', background: 'var(--bg-secondary)', borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <Info size={16} color="var(--blue)" style={{ flexShrink: 0, marginTop: 2 }} />
+                <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Credentials are encrypted using AES-256 and stored securely. Create an IAM User with the <strong>AWSBillingReadOnlyAccess</strong> policy, or attach this custom inline policy:
+                </p>
+              </div>
+              <pre style={{ margin: 0, padding: 10, background: 'var(--bg)', borderRadius: 4, fontSize: 11, color: 'var(--text)', overflowX: 'auto', border: '1px solid var(--border)', fontFamily: 'monospace' }}>
+{`{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ce:GetCostAndUsage",
+        "ce:GetCostForecast",
+        "ce:GetDimensionValues"
+      ],
+      "Resource": "*"
+    }
+  ]
+}`}
+              </pre>
             </div>
           </div>
 
